@@ -30,9 +30,9 @@ install upgrade, uninstall and verify packages.
 %description -l pl
 GNOME RPM jest graficznym interfejsem do RPM, podobnym do Glinta, ale
 napisanym z u¿yciem widgetów GTK i bibliotek GNOME. Jest w trakcie
-tworzenia, wiêc brakuje mu niektórych mo¿lio¶ci, ale aktualnie pozwala
+tworzenia, wiêc brakuje mu niektórych mo¿liwo¶ci, ale aktualnie pozwala
 pytaæ siê o pakiety w systemie plików i bazie danych, instalowaæ,
-uaktualniaæ, odinstalowywaæ i weryfikowaæ pakiety.
+uaktualniaæ, odinstalowaæ i weryfikowaæ pakiety.
 
 %prep
 %setup -q
