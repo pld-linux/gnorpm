@@ -1,0 +1,263 @@
+--- gnorpm-0.96/find/search.h.orig	Fri Aug 11 11:35:56 2000
++++ gnorpm-0.96/find/search.h	Wed Jul 23 11:48:33 2003
+@@ -22,6 +22,7 @@
+ #include <glib.h>
+ #include <sys/types.h>
+ #include <rpmlib.h>
++#include <rpmdb.h>
+ #include "rpmdata.h"
+ 
+ /* returns the complete list of packages in the rpmfind system.  Do not free
+--- gnorpm-0.96/find/guess.h.orig	Fri Aug 11 11:35:56 2000
++++ gnorpm-0.96/find/guess.h	Wed Jul 23 11:49:30 2003
+@@ -21,6 +21,7 @@
+ 
+ #include <glib.h>
+ #include <rpmlib.h>
++#include <rpmdb.h>
+ 
+ typedef enum {
+   NORTH_AMERICA = 1,
+--- gnorpm-0.96/find/deps.h.orig	Fri Aug 11 11:35:56 2000
++++ gnorpm-0.96/find/deps.h	Wed Jul 23 11:50:57 2003
+@@ -21,6 +21,7 @@
+ 
+ #include <glib.h>
+ #include <rpmlib.h>
++#include <rpmdb.h>
+ #include "search.h"
+ 
+ GList *resolveName(char *name, rpmdb db);
+--- gnorpm-0.96/find/tester.c.orig	Sat Mar 13 03:26:43 1999
++++ gnorpm-0.96/find/tester.c	Wed Jul 23 11:54:41 2003
+@@ -30,7 +30,7 @@
+   rpmdb db;
+ 
+   gnomelib_init("tester", "0.0");
+-  rpmReadRC(NULL);
++  rpmReadConfigFiles(NULL, NULL);
+   rpmdbOpen(NULL, &db, O_RDONLY, 0644);
+   guessInit(db);
+   cache_create_dirs();
+--- gnorpm-0.96/verify.h.orig	Wed Jun 30 07:10:39 1999
++++ gnorpm-0.96/verify.h	Wed Jul 23 13:33:57 2003
+@@ -17,6 +17,7 @@
+  */
+ #include <gnome.h>
+ #include <rpmlib.h>
++#include <rpmcli.h>
+ #include "dbhandle.h"
+ 
+ GtkWidget *verify_packages(DBHandle *hdl, GList *indices, gint omitMask);
+--- gnorpm-0.96/dbhandle.h.orig	Sat May 29 05:59:48 1999
++++ gnorpm-0.96/dbhandle.h	Wed Jul 23 11:56:15 2003
+@@ -20,6 +20,7 @@
+ 
+ #include <glib.h>
+ #include <rpmlib.h>
++#include <rpmdb.h>
+ 
+ typedef struct _DBHandle DBHandle;
+ 
+--- gnorpm-0.96/install.c.orig	Mon Dec 11 16:02:10 2000
++++ gnorpm-0.96/install.c	Wed Jul 23 13:32:30 2003
+@@ -27,6 +27,9 @@
+ #include <gnome.h>
+ 
+ #include <rpmlib.h>
++#include <rpmdb.h>
++#include <rpmps.h>
++#include <rpmts.h>
+ 
+ #include "rpmprogress.h"
+ 
+@@ -177,41 +180,20 @@
+ 
+ static void addDepNodes(rpmdb db, gchar *rootdir,
+ 			GtkCTree *ctree, GtkCTreeNode *parent,
+-			struct rpmDependencyConflict *conflicts,
++			rpmProblem *conflicts,
+ 			int numConflicts, GList **processed) {
+   GtkCTreeNode *node;
+   gint i, flags;
+   guint32 offs;
+   gchar buf[1024], *row[1];
+-  struct rpmDependencyConflict *conf2;
++  rpmProblem *conf2;
+   gint numConf2;
+ 
+   row[0] = buf;
+   for (i = 0; i < numConflicts; i++) {
+     /* construct the text for this conflict */
+     buf[0] = '\0';
+-    strcat(buf, conflicts[i].byName); strcat(buf, "-");
+-    strcat(buf, conflicts[i].byVersion); strcat(buf, "-");
+-    strcat(buf, conflicts[i].byRelease);
+-    if (conflicts[i].sense == RPMDEP_SENSE_REQUIRES)
+-      strcat(buf, _(" requires "));
+-    else
+-      strcat(buf, _(" conflicts with "));
+-    strcat(buf, conflicts[i].needsName);
+-    flags = conflicts[i].needsFlags;
+-    if (flags) {
+-      strcat(buf, " ");
+-      if (flags & RPMSENSE_LESS)
+-        strcat(buf, "<");
+-      if (flags & RPMSENSE_GREATER)
+-        strcat(buf, ">");
+-      if (flags & RPMSENSE_EQUAL)
+-        strcat(buf, "=");
+-      if (flags & RPMSENSE_SERIAL)
+-        strcat(buf, "S");
+-      strcat(buf, " ");
+-      strcat(buf, conflicts[i].needsVersion);
+-    }
++    strcat(buf, rpmProblemString(conflicts[i]));
+     node = gtk_ctree_insert_node(ctree, parent, NULL, row, 0,
+ 				 NULL, NULL, NULL, NULL, FALSE, FALSE);
+ 
+@@ -219,11 +201,11 @@
+     offs = 0;
+ #ifdef	HAVE_RPM_4_0
+   { rpmdbMatchIterator mi;
+-    const char * name, * version, * release;
+-    headerNVR(conflicts[i].byHeader, &name, &version, &release);
++    const char * name = conflicts[i]->pkgNEVR, * version, * release;
++    /* headerNVR(conflicts[i]->pkgNEVR, &name, &version, &release);   XXX: how to get these fron NEVR? */
+     mi = rpmdbInitIterator(db, RPMTAG_NAME, name, 0);
+-    rpmdbSetIteratorVersion(mi, version);
+-    rpmdbSetIteratorRelease(mi, release);
++    rpmdbSetIteratorRE(mi, RPMTAG_VERSION, RPMMIRE_DEFAULT, version);
++    rpmdbSetIteratorRE(mi, RPMTAG_RELEASE, RPMMIRE_DEFAULT, release);
+     while (rpmdbNextIterator(mi)) {
+       offs = rpmdbGetIteratorOffset(mi);
+       break;
+@@ -255,26 +237,26 @@
+       }
+       rpmdepDone(rpmdep);
+     }
++    /* add nodes for packages this one depends on ... */
++    addDepNodes(db, rootdir, ctree, node, conf2, numConf2, processed);
++    /* free the conflicts array */
++    rpmdepFreeConflicts(conf2, numConf2);
+ #else
+     {
+-      rpmTransactionSet rpmdep = rpmtransCreateSet(db, rootdir);
+-      rpmtransRemovePackage(rpmdep, offs);
+-      if (rpmdepCheck(rpmdep, &conf2, &numConf2)) {
+-	rpmtransFree(rpmdep);
++      rpmts rpmdep = rpmtsCreate(); /* rpmtransCreateSet(db, rootdir); */
++      rpmtsAddEraseElement(rpmdep, NULL /* header? */, offs);
++      if (rpmtsCheck(rpmdep)) {
++	rpmtsFree(rpmdep);
+ 	continue;
+       }
+-      rpmtransFree(rpmdep);
++      rpmtsFree(rpmdep);
+     }
+ #endif
+-    /* add nodes for packages this one depends on ... */
+-    addDepNodes(db, rootdir, ctree, node, conf2, numConf2, processed);
+-    /* free the conflicts array */
+-    rpmdepFreeConflicts(conf2, numConf2);
+   }
+ }
+ 
+ /* returns TRUE if yes was pressed */
+-static gboolean displayDepProblems(struct rpmDependencyConflict *conflicts,
++static gboolean displayDepProblems(rpmProblem *conflicts,
+ 				   int numConflicts,
+ 				   rpmdb db, gchar *rootdir,
+ 				   GList **dependentPkgs) {
+@@ -433,7 +415,7 @@
+ 
+ #else  /* !HAVE_RPM_2_5 */
+ 
+-static gboolean printProblems(rpmProblemSet probs)
++static gboolean printProblems(rpmps probs)
+ {
+   GtkWidget *win, *w, *list;
+   gint i, ret = FALSE;
+@@ -454,7 +436,7 @@
+ 
+   for (i = 0; i < probs->numProblems; i++) {
+       if (!probs->probs[i].ignoreProblem) {
+-	  const char *msg = rpmProblemString(probs->probs[i]);
++	  const char *msg = rpmProblemString(probs->probs+i);
+ 	  w = gtk_list_item_new_with_label(msg);
+ 	  gtk_widget_show(w);
+ 	  items = g_list_append(items, w);
+@@ -495,12 +477,12 @@
+   gchar **packages, *pkg_file;
+   Header *binaryHeaders;
+   rpmdb db;
+-  rpmTransactionSet rpmdep = NULL;
+-  rpmProblemSet probs = NULL, finalProbs = NULL;
++  rpmts rpmdep = NULL;
++  rpmps probs = NULL, finalProbs = NULL;
+   GtkWidget *win, *wid;
+ 
+   FD_t fd;
+-  struct rpmDependencyConflict *conflicts;
++  struct rpmProblem *conflicts;
+   gulong *sizep;
+ 
+   if (transFlags & RPMTRANS_FLAG_TEST)
+@@ -601,11 +583,11 @@
+ 	      rc = rpmRunTransactions(rpmdep, updateDisp, NULL,
+ 				      probs, &finalProbs,
+ 				      transFlags, probFilter);
+-	      rpmProblemSetFree(finalProbs);
++	      rpmpsSetFree(finalProbs);
+ 	  }
+       }
+       gtk_widget_destroy(win);
+-      rpmProblemSetFree(probs);
++      rpmpsFree(probs);
+       probs = NULL;
+       if (rc == -1) /* some error */
+ 	  numFailed = numPackages;
+@@ -737,10 +719,10 @@
+ 		  gint probFilter, gint interfaceFlags) {
+   rpmdb db;
+   gint mode, numFailed = 0, numConflicts, stopUninstall = 0;
+-  rpmTransactionSet rpmdep = NULL;
++  rpmts rpmdep = NULL;
+   struct rpmDependencyConflict *conflicts;
+   GList *tmp;
+-  rpmProblemSet probs;
++  rpmps probs;
+ 
+   if (transFlags & RPMTRANS_FLAG_TEST)
+     mode = O_RDONLY;
+--- gnorpm-0.96/configure.in.orig	Wed Feb 14 13:56:54 2001
++++ gnorpm-0.96/configure.in	Wed Jul 23 13:44:51 2003
+@@ -79,28 +79,6 @@
+ ALL_LINGUAS="az ca cs da de el es fi fr ga gl hu it ja ko lt nl no ro ru sk sl sv tr uk zh_TW.Big5 zh_CN.GB2312 pt_BR"
+ AM_GNU_GETTEXT
+ 
+-LDFLAGS="$save_LDFLAGS"
+-save_LDFLAGS="$LDFLAGS"
+-LDFLAGS="-L$RPM_PREFIX/lib $LDFLAGS"
+-AC_CHECK_LIB(z, gzread,:)
+-
+-AC_CHECK_LIB(bz2, bzread, [LIBS="$LIBS -lbz2"],
+- AC_CHECK_LIB(bz2, BZ2_bzread, [LIBS="$LIBS -lbz2"],
+-   AC_MSG_WARN([*** libbz2 not found])))
+-
+-AC_CHECK_FUNC(dbopen, [], [
+-  AC_CHECK_LIB(db-3.1, db_create, [LIBS="-ldb-3.1 $LIBS"],
+-    AC_CHECK_LIB(db-3.0, db_create, [LIBS="-ldb-3.0 $LIBS"],
+-      AC_CHECK_LIB(db1, dbopen, [LIBS="-ldb1 $LIBS"],
+-        AC_CHECK_LIB(db, dbopen, [LIBS="-ldb $LIBS"],
+-           AC_MSG_ERROR([*** libdb not found])))))
+-])
+-AC_CHECK_HEADERS(db_185.h db1/db.h)
+-
+-AC_CHECK_LIB(popt, poptGetContext,
+-  [LIBS="-lpopt $LIBS"],
+-  AC_MSG_ERROR(*** libpopt not found))
+-
+ AC_CHECK_LIB(rpmio, Fopen, [LIBS="-lrpmio $LIBS";
+ 	AC_DEFINE_UNQUOTED(HAVE_RPM_4_0, 1)
+ 	AC_SUBST(HAVE_RPM_4_0)
