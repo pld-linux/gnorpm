@@ -1,9 +1,12 @@
 Summary:	A graphical front end to the Red Hat Package Manager, for GNOME
+Summary(pl):	Graficzny frontend pod GNOME do rpm
 Name: 		gnorpm
 Version: 	0.9
 Release: 	1
 Copyright: 	GPL
 Group: 		Applications/System
+Group(de):	Applikationen/System
+Group(pl):	Aplikacje/System
 Source: 	ftp://ftp.daa.com.au/pub/james/gnome/gnorpm-%{version}.tar.gz
 Patch0: 	gnorpm-redhat-config.patch
 Patch1:		gnorpm-rpm3.patch
@@ -23,8 +26,8 @@ verify packages.
 %patch1 -p0
 
 %build
-CFLAGSA="$RPM_OPT_FLAGS" \
-LDFLAGS="-s -L/usr/X11R6/lib" \
+CFLAGSA="%{rpmcflags}" \
+LDFLAGS="%{rpmldflags} -L/usr/X11R6/lib" \
 ./configure \
 	--prefix=/usr/X11R6 \
 	--target=%{_target_platform} \
@@ -34,8 +37,6 @@ LDFLAGS="-s -L/usr/X11R6/lib" \
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__make} prefix=$RPM_BUILD_ROOT/usr/X11R6 install
-
-strip $RPM_BUILD_ROOT/usr/X11R6/bin/gnorpm
 
 %clean
 rm -rf $RPM_BUILD_ROOT
