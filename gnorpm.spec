@@ -1,24 +1,34 @@
 Summary:	A graphical front end to the Red Hat Package Manager, for GNOME
 Summary(pl):	Graficzny frontend pod GNOME do rpm
-Name: 		gnorpm
-Version: 	0.9
-Release: 	1
-Copyright: 	GPL
-Group: 		Applications/System
-Group(de):	Applikationen/System
-Group(pl):	Aplikacje/System
-Source: 	ftp://ftp.daa.com.au/pub/james/gnome/gnorpm-%{version}.tar.gz
-Patch0: 	gnorpm-redhat-config.patch
-Patch1:		gnorpm-rpm3.patch
+Name:		gnorpm
+Version:	0.9
+Release:	1
+License:	GPL
+Group:		X11/Applications
+Group(de):	X11/Applikationen
+Group(pl):	X11/Aplikacje
+Source0:	ftp://ftp.daa.com.au/pub/james/gnome/%{name}-%{version}.tar.gz
+Patch0:		%{name}-redhat-config.patch
+Patch1:		%{name}-rpm3.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-Obsoletes: 	glint
+Obsoletes:	glint
+
+%define		_prefix		/usr/X11R6
+%define		_mandir		%{_prefix}/man
 
 %description
-Gnome RPM is a graphical front end to RPM, similar to Glint, but written with
-the GTK widget set and the GNOME libraries.  It is currently under
-development, so there are some features missing, but you can currently query
-packages in the filesystem and database, install upgrade, uninstall and
-verify packages.
+Gnome RPM is a graphical front end to RPM, similar to Glint, but
+written with the GTK widget set and the GNOME libraries. It is
+currently under development, so there are some features missing, but
+you can currently query packages in the filesystem and database,
+install upgrade, uninstall and verify packages.
+
+%description -l pl
+Gnome RPM jest graficznym interfejsem do RPM, podobnym do Glinta, ale
+napisanym z u¿yciem widgetów GTK i bibliotek GNOME. Jest w trakcie
+tworzenia, wiêc brakuje mu niektórych mo¿lio¶ci, ale aktualnie pozwala
+pytaæ siê o pakiety w systemie plików i bazie danych, instalowaæ,
+uaktualniaæ, odinstalowywaæ i weryfikowaæ pakiety.
 
 %prep
 %setup -q
@@ -27,25 +37,30 @@ verify packages.
 
 %build
 CFLAGSA="%{rpmcflags}" \
-LDFLAGS="%{rpmldflags} -L/usr/X11R6/lib" \
+LDFLAGS="%{rpmldflags} -L%{_prefix}/lib" \
 ./configure \
-	--prefix=/usr/X11R6 \
+	--prefix=%{_prefix} \
 	--target=%{_target_platform} \
 	--host=%{_host}
 %{__make}
 
+%find_lang %{name}
+
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} prefix=$RPM_BUILD_ROOT/usr/X11R6 install
+%{__make} prefix=$RPM_BUILD_ROOT%{_prefix} install
+
+gzip -9nf AUTHORS NEWS README
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files
-/usr/X11R6/bin/gnorpm
-/usr/X11R6/share/gnome/apps/*
-/usr/X11R6/share/gnome/help/gnorpm/C/*
-/usr/X11R6/share/locale/*/LC_MESSAGES/gnorpm.mo
-%config /usr/X11R6/share/gnorpmrc
+%files -f %{name}.lang
+%defattr(644,root,root,755)
+%doc AUTHORS.gz NEWS.gz README.gz
+%{_bindir}/gnorpm
+%{_datadir}/gnome/apps/*
+%{_datadir}/gnome/help/gnorpm/C/*
+# THIS SHOULD GO TO /etc !!!
+%config %{_datadir}/gnorpmrc
 #/usr/X11R6/share/pixmaps/defpackage.gif
-%doc AUTHORS NEWS README
