@@ -22,14 +22,14 @@ Obsoletes:	glint
 
 %description
 GNOME RPM is a graphical front end to RPM, similar to Glint, but
-written with the GTK widget set and the GNOME libraries. It is
+written with the GTK+ widget set and the GNOME libraries. It is
 currently under development, so there are some features missing, but
 you can currently query packages in the filesystem and database,
 install upgrade, uninstall and verify packages.
 
 %description -l pl
 GNOME RPM jest graficznym interfejsem do RPM, podobnym do Glinta, ale
-napisanym z u¿yciem widgetów GTK i bibliotek GNOME. Jest w trakcie
+napisanym z u¿yciem widgetów GTK+ i bibliotek GNOME. Jest w trakcie
 tworzenia, wiêc brakuje mu niektórych mo¿liwo¶ci, ale aktualnie pozwala
 pytaæ siê o pakiety w systemie plików i bazie danych, instalowaæ,
 uaktualniaæ, odinstalowaæ i weryfikowaæ pakiety.
