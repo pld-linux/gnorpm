@@ -23,9 +23,11 @@ verify packages.
 %setup -n gnorpm-%{ver}
 %patch0 -p 1 -b .rhconfig
 
-CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{prefix}
 
 %build
+CFLAGS="$RPM_OPT_FLAGS" \
+./configure %{_target} \
+	--prefix=%{prefix}
 make
 
 %install
