@@ -48,14 +48,12 @@ LDFLAGS="%{rpmldflags} -L%{_prefix}/lib" \
 rm -rf $RPM_BUILD_ROOT
 %{__make} prefix=$RPM_BUILD_ROOT%{_prefix} install
 
-gzip -9nf AUTHORS NEWS README
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%doc AUTHORS.gz NEWS.gz README.gz
+%doc AUTHORS NEWS README
 %{_bindir}/gnorpm
 %{_datadir}/gnome/apps/*
 %{_datadir}/gnome/help/gnorpm/C/*
