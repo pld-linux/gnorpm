@@ -29,7 +29,7 @@ LDFLAGS="-s -L/usr/X11R6/lib" \
 	--prefix=/usr/X11R6 \
 	--target=%{_target_platform} \
 	--host=%{_host}
-make
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
