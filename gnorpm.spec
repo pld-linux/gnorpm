@@ -49,11 +49,3 @@ rm -rf $RPM_BUILD_ROOT
 %config /usr/X11R6/share/gnorpmrc
 #/usr/X11R6/share/pixmaps/defpackage.gif
 %doc AUTHORS NEWS README
-
-%changelog
-* Mon Apr 12 1999 Matt Wilson <msw@redhat.com>
-- updated to 0.8
-
-* Fri Mar 12 1999 Matt Wilson <msw@redhat.com>
-- patched to work with rpm-3.0
-- GnoRPM obsoletes glint.
