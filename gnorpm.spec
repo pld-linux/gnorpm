@@ -7,7 +7,7 @@ Group: 		Applications/System
 Source: 	ftp://ftp.daa.com.au/pub/james/gnome/gnorpm-%{version}.tar.gz
 Patch0: 	gnorpm-redhat-config.patch
 Patch1:		gnorpm-rpm3.patch
-BuildRoot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes: 	glint
 
 %description
@@ -21,7 +21,6 @@ verify packages.
 %setup -q
 %patch0 -p1
 %patch1 -p0
-
 
 %build
 CFLAGSA="$RPM_OPT_FLAGS" \
