@@ -1,7 +1,7 @@
 Summary:	A graphical front end to the Red Hat Package Manager, for GNOME
 Name: 		gnorpm
-Version: 	0.8
-Release: 	6
+Version: 	0.9
+Release: 	1
 Copyright: 	GPL
 Group: 		Applications/System
 Source: 	ftp://ftp.daa.com.au/pub/james/gnome/gnorpm-%{version}.tar.gz
