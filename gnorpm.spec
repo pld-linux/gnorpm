@@ -33,7 +33,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make prefix=$RPM_BUILD_ROOT/usr/X11R6 install
+%{__make} prefix=$RPM_BUILD_ROOT/usr/X11R6 install
 
 strip $RPM_BUILD_ROOT/usr/X11R6/bin/gnorpm
 
