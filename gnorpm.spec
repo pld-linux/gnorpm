@@ -7,7 +7,7 @@ Group: 		Applications/System
 Source: 	ftp://ftp.daa.com.au/pub/james/gnome/gnorpm-%{version}.tar.gz
 Patch0: 	gnorpm-redhat-config.patch
 Patch1:		gnorpm-rpm3.patch
-BuildRoot: 	/var/tmp/%{name}-%{version}-root
+BuildRoot:	/tmp/%{name}-%{version}-root
 Obsoletes: 	glint
 
 %description
