@@ -1,0 +1,11 @@
+--- gnorpm-0.96/configure.in.orig	Wed Jul 23 13:47:36 2003
++++ gnorpm-0.96/configure.in	Wed Jul 23 13:54:47 2003
+@@ -76,7 +76,7 @@
+   AC_MSG_ERROR([*** You need libghttp >= 1.0.3 (aka gnome-http) to compile gnorpm]))
+ LIBS="$old_LIBS"
+ 
+-ALL_LINGUAS="az ca cs da de el es fi fr ga gl hu it ja ko lt nl no ro ru sk sl sv tr uk zh_TW.Big5 zh_CN.GB2312 pt_BR"
++ALL_LINGUAS="az ca cs da de el es fi fr ga gl hu it ja ko lt nl no ro ru sk sl sv tr uk zh_TW zh_CN pt_BR"
+ AM_GNU_GETTEXT
+ 
+ AC_CHECK_LIB(rpmio, Fopen, [LIBS="-lrpmio $LIBS";
