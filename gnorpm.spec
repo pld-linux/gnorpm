@@ -6,6 +6,7 @@ Release:	1
 License:	GPL
 Group:		X11/Applications
 Source0:	ftp://ftp.daa.com.au/pub/james/gnome/%{name}-%{version}.tar.gz
+# Source0-md5:	fd5b10fb7beec852d844cd4b3bd3c53c
 Patch0:		%{name}-redhat-config.patch
 Patch1:		%{name}-rpm3.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
