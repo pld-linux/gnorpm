@@ -11,8 +11,6 @@ Patch1:		%{name}-rpm3.patch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	glint
 
-%define		_prefix		/usr/X11R6
-%define		_mandir		%{_prefix}/man
 
 %description
 Gnome RPM is a graphical front end to RPM, similar to Glint, but
