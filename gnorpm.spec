@@ -1,13 +1,15 @@
 Summary:	A graphical front end to the Red Hat Package Manager, for GNOME
 Summary(pl):	Graficzny frontend pod GNOME do rpm
 Name:		gnorpm
-Version:	0.96
+Version:	0.98
 Release:	0.1
 License:	GPL
 Group:		X11/Applications
-Source0:	http://ftp.gnome.org/pub/GNOME/sources/gnorpm/0.96/%{name}-%{version}.tar.gz
-# Source0-md5:	81d965c092f9b975edc8c4bd9336e82e
+Source0:	http://www.virtualworlds.de/Download/%{name}-%{version}.src.tar.bz2
+# Source0-md5:	b9175d65243b9a514ef3fdcee440ce3d
+URL:		http://www.virtualworlds.de/GRPM/
 Patch0:		%{name}-locale-zh.patch
+#TODO correct patch1
 Patch1:		%{name}-rpm.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -15,8 +17,8 @@ BuildRequires:	gettext-devel
 BuildRequires:	gnome-libs-devel
 BuildRequires:	libghttp-devel >= 1.0.3
 BuildRequires:	libxml-devel >= 1.3
-# because patch1 is not finished...
-BuildRequires:	rpm-devel < 4.1
+BuildRequires:	gtkhtml-devel
+BuildRequires:	rpm-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	glint
 
@@ -30,14 +32,14 @@ install upgrade, uninstall and verify packages.
 %description -l pl
 GNOME RPM jest graficznym interfejsem do RPM, podobnym do Glinta, ale
 napisanym z u¿yciem widgetów GTK+ i bibliotek GNOME. Jest w trakcie
-tworzenia, wiêc brakuje mu niektórych mo¿liwo¶ci, ale aktualnie pozwala
-pytaæ siê o pakiety w systemie plików i bazie danych, instalowaæ,
-uaktualniaæ, odinstalowaæ i weryfikowaæ pakiety.
+tworzenia, wiêc brakuje mu niektórych mo¿liwo¶ci, ale aktualnie
+pozwala pytaæ siê o pakiety w systemie plików i bazie danych,
+instalowaæ, uaktualniaæ, odinstalowaæ i weryfikowaæ pakiety.
 
 %prep
 %setup -q
 %patch0 -p1
-# not finished
+#TODO correct this patch
 #%patch1 -p1
 
 mv -f po/{zh_TW.Big5,zh_TW}.po
