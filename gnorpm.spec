@@ -1,5 +1,5 @@
 Summary:	A graphical front end to the Red Hat Package Manager, for GNOME
-Summary(pl):	Graficzny frontend pod GNOME do rpm
+Summary(pl.UTF-8):   Graficzny frontend pod GNOME do rpm
 Name:		gnorpm
 Version:	0.98
 Release:	0.1
@@ -29,12 +29,12 @@ currently under development, so there are some features missing, but
 you can currently query packages in the filesystem and database,
 install upgrade, uninstall and verify packages.
 
-%description -l pl
+%description -l pl.UTF-8
 GNOME RPM jest graficznym interfejsem do RPM, podobnym do Glinta, ale
-napisanym z u¿yciem widgetów GTK+ i bibliotek GNOME. Jest w trakcie
-tworzenia, wiêc brakuje mu niektórych mo¿liwo¶ci, ale aktualnie
-pozwala pytaæ siê o pakiety w systemie plików i bazie danych,
-instalowaæ, uaktualniaæ, odinstalowaæ i weryfikowaæ pakiety.
+napisanym z uÅ¼yciem widgetÃ³w GTK+ i bibliotek GNOME. Jest w trakcie
+tworzenia, wiÄ™c brakuje mu niektÃ³rych moÅ¼liwoÅ›ci, ale aktualnie
+pozwala pytaÄ‡ siÄ™ o pakiety w systemie plikÃ³w i bazie danych,
+instalowaÄ‡, uaktualniaÄ‡, odinstalowaÄ‡ i weryfikowaÄ‡ pakiety.
 
 %prep
 %setup -q
