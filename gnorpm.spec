@@ -1,5 +1,5 @@
 Summary:	A graphical front end to the Red Hat Package Manager, for GNOME
-Summary(pl.UTF-8):   Graficzny frontend pod GNOME do rpm
+Summary(pl.UTF-8):	Graficzny frontend pod GNOME do rpm
 Name:		gnorpm
 Version:	0.98
 Release:	0.1
