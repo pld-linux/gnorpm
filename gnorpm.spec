@@ -13,7 +13,7 @@ Patch0:		%{name}-locale-zh.patch
 Patch1:		%{name}-rpm.patch
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	gnome-libs-devel
 BuildRequires:	libghttp-devel >= 1.0.3
 BuildRequires:	libxml-devel >= 1.3
